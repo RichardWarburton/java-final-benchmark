@@ -16,9 +16,6 @@ import static org.openjdk.jmh.annotations.Scope.Thread;
 @State(Thread)
 public class JavaFinalBenchmark extends BenchmarkParent1
 {
-    private final Polymorph polymorph = new Polymorph();
-    private final Polymorph childA = new OverridingClassA();
-    private final Polymorph childB = new OverridingClassB();
 
     @GenerateMicroBenchmark
     public void virtualInvoke()
@@ -30,47 +27,6 @@ public class JavaFinalBenchmark extends BenchmarkParent1
     public void finalInvoke()
     {
         targetFinal();
-    }
-
-    @GenerateMicroBenchmark
-    public void monomorphicInvoke()
-    {
-        polymorph.polymorphicMethod();
-    }
-
-    @GenerateMicroBenchmark
-    public void bimorphicInvokeWarmup()
-    {
-        invokeBimorphic(childA);
-    }
-
-    @GenerateMicroBenchmark
-    public void bimorphicInvoke()
-    {
-        invokeBimorphic(childB);
-    }
-
-    @GenerateMicroBenchmark
-    public void megamorphicInvokeWarmup()
-    {
-        invokeMegamorphic(childA);
-        invokeMegamorphic(childB);
-    }
-
-    @GenerateMicroBenchmark
-    public void megamorphicInvoke()
-    {
-        invokeMegamorphic(polymorph);
-    }
-
-    private void invokeBimorphic(Polymorph polymorph)
-    {
-        polymorph.polymorphicMethod();
-    }
-
-    private void invokeMegamorphic(Polymorph polymorph)
-    {
-        polymorph.polymorphicMethod();
     }
 
     /**
