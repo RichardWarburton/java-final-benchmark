@@ -2,4 +2,5 @@
 
 set -eu
 
-java -jar target/microbenchmarks.jar
+mvn clean package
+java -cp target/microbenchmarks.jar com.insightfullogic.java_final_benchmarks.JavaFinalBenchmark
