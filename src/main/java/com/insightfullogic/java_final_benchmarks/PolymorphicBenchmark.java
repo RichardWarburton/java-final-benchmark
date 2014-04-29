@@ -13,7 +13,6 @@ import org.openjdk.jmh.logic.results.Result;
 import org.openjdk.jmh.logic.results.RunResult;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
-import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.WarmupMode;
 
@@ -21,7 +20,6 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openjdk.jmh.annotations.CompilerControl.Mode.*;
 import static org.openjdk.jmh.annotations.Mode.AverageTime;
-import static org.openjdk.jmh.annotations.Mode.SampleTime;
 import static org.openjdk.jmh.annotations.Scope.Thread;
 
 
@@ -31,7 +29,7 @@ import static org.openjdk.jmh.annotations.Scope.Thread;
 @Fork(5)
 @OutputTimeUnit(NANOSECONDS)
 @State(Thread)
-public class BrokenBenchmark
+public class PolymorphicBenchmark
 {
     private Polymorph polymorph;
     private Polymorph childA;
@@ -103,20 +101,20 @@ public class BrokenBenchmark
     public static void main(String[] args) throws RunnerException {
         RunResult monomorphResult = new Runner(new OptionsBuilder()
                 .warmupMode(WarmupMode.BULK)
-                .include(".*" + BrokenBenchmark.class.getSimpleName() + ".*monomorphic.*_measure")
-                .includeWarmup(".*" + BrokenBenchmark.class.getSimpleName() + ".*monomorphic.*_warmup")
+                .include(".*" + PolymorphicBenchmark.class.getSimpleName() + ".*monomorphic.*_measure")
+                .includeWarmup(".*" + PolymorphicBenchmark.class.getSimpleName() + ".*monomorphic.*_warmup")
                 .build()).runSingle();
 
         RunResult bimorphResult = new Runner(new OptionsBuilder()
                 .warmupMode(WarmupMode.BULK)
-                .include(".*" + BrokenBenchmark.class.getSimpleName() + ".*bimorphic.*_measure")
-                .includeWarmup(".*" + BrokenBenchmark.class.getSimpleName() + ".*bimorphic.*_warmup")
+                .include(".*" + PolymorphicBenchmark.class.getSimpleName() + ".*bimorphic.*_measure")
+                .includeWarmup(".*" + PolymorphicBenchmark.class.getSimpleName() + ".*bimorphic.*_warmup")
                 .build()).runSingle();
 
         RunResult megamorphResult = new Runner(new OptionsBuilder()
                 .warmupMode(WarmupMode.BULK)
-                .include(".*" + BrokenBenchmark.class.getSimpleName() + ".*megamorphic.*_measure")
-                .includeWarmup(".*" + BrokenBenchmark.class.getSimpleName() + ".*megamorphic.*_warmup")
+                .include(".*" + PolymorphicBenchmark.class.getSimpleName() + ".*megamorphic.*_measure")
+                .includeWarmup(".*" + PolymorphicBenchmark.class.getSimpleName() + ".*megamorphic.*_warmup")
                 .build()).runSingle();
 
         System.out.println("----------------------------------");
