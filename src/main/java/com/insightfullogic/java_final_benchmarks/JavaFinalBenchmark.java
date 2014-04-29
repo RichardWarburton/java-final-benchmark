@@ -7,26 +7,35 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openjdk.jmh.annotations.CompilerControl.Mode.DONT_INLINE;
+import static org.openjdk.jmh.annotations.Mode.AverageTime;
 import static org.openjdk.jmh.annotations.Mode.SampleTime;
 import static org.openjdk.jmh.annotations.Scope.Thread;
 
-@BenchmarkMode(SampleTime)
-@Fork(1)
+@BenchmarkMode(AverageTime)
+@Warmup(iterations = 5, time = 1, timeUnit = SECONDS)
+@Measurement(iterations = 5, time = 1, timeUnit = SECONDS)
+@Fork(5)
+@OutputTimeUnit(NANOSECONDS)
 @State(Thread)
-public class JavaFinalBenchmark extends BenchmarkParent1
-{
+public class JavaFinalBenchmark {
 
-    @GenerateMicroBenchmark
-    public void virtualInvoke()
-    {
-        targetVirtual();
+    private BenchmarkParent1 target;
+
+    @Setup
+    public void setup() {
+        target = new BenchmarkParent1();
     }
 
     @GenerateMicroBenchmark
-    public void finalInvoke()
-    {
-        targetFinal();
+    public void virtualInvoke() {
+        target.targetVirtual();
+    }
+
+    @GenerateMicroBenchmark
+    public void finalInvoke() {
+        target.targetFinal();
     }
 
     /**
@@ -37,99 +46,83 @@ public class JavaFinalBenchmark extends BenchmarkParent1
      */
 
     @GenerateMicroBenchmark
-    public void parentMethod1()
-    {
-        inheritedTarget1();
+    public void parentMethod1() {
+        target.inheritedTarget1();
     }
 
     @GenerateMicroBenchmark
-    public void parentMethod2()
-    {
-        inheritedTarget2();
+    public void parentMethod2() {
+        target.inheritedTarget2();
     }
 
     @GenerateMicroBenchmark
-    public void parentMethod3()
-    {
-        inheritedTarget3();
+    public void parentMethod3() {
+        target.inheritedTarget3();
     }
 
     @GenerateMicroBenchmark
-    public void parentMethod4()
-    {
-        inheritedTarget4();
+    public void parentMethod4() {
+        target.inheritedTarget4();
     }
 
     @GenerateMicroBenchmark
-    public void parentFinalMethod1()
-    {
-        inheritedFinalTarget1();
+    public void parentFinalMethod1() {
+        target.inheritedFinalTarget1();
     }
 
     @GenerateMicroBenchmark
-    public void parentFinalMethod2()
-    {
-        inheritedFinalTarget2();
+    public void parentFinalMethod2() {
+        target.inheritedFinalTarget2();
     }
 
     @GenerateMicroBenchmark
-    public void parentFinalMethod3()
-    {
-        inheritedFinalTarget3();
+    public void parentFinalMethod3() {
+        target.inheritedFinalTarget3();
     }
 
     @GenerateMicroBenchmark
-    public void parentFinalMethod4()
-    {
-        inheritedFinalTarget4();
-    }
-
-    /**
-     * Inherited Methods
-     *
-     * Test the hypothesis of distance up the class hierarchy affects the invoke performance.
-     * Numbers refer to how far up the class hierarchy the inherited method is from
-     */
-
-    @GenerateMicroBenchmark
-    public void alwaysOverriddenMethod()
-    {
-        alwaysOverriddenTarget();
+    public void parentFinalMethod4() {
+        target.inheritedFinalTarget4();
     }
 
     @GenerateMicroBenchmark
-    public void specialAlwaysOverriddenMethod()
-    {
-        super.alwaysOverriddenTarget();
-    }
-
-    // Invoked target methods,see also parent classes.
-
-    @CompilerControl(DONT_INLINE)
-    public void alwaysOverriddenTarget()
-    {
-
+    public void alwaysOverriddenMethod() {
+        target.alwaysOverriddenTarget();
     }
 
     @CompilerControl(DONT_INLINE)
-    public void targetVirtual()
-    {
-
+    public static class BenchmarkParent1 extends BenchmarkParent2 {
+        public void alwaysOverriddenTarget() {}
+        public void inheritedTarget1() {}
+        public final void inheritedFinalTarget1() {}
+        public void targetVirtual() {}
+        public final void targetFinal() {}
     }
 
     @CompilerControl(DONT_INLINE)
-    public final void targetFinal()
-    {
-
+    public static class BenchmarkParent2 extends BenchmarkParent3 {
+        public void alwaysOverriddenTarget() {}
+        public void inheritedTarget2() {}
+        public final void inheritedFinalTarget2() {}
     }
 
-    public static void main(String[] args) throws RunnerException
-    {
+    @CompilerControl(DONT_INLINE)
+    public static class BenchmarkParent3 extends BenchmarkParent4 {
+        public void alwaysOverriddenTarget() {}
+        public void inheritedTarget3() {}
+        public final void inheritedFinalTarget3() {}
+    }
+
+    @CompilerControl(DONT_INLINE)
+    public static class BenchmarkParent4 {
+        public void alwaysOverriddenTarget() {}
+        public void inheritedTarget4() {}
+        public final void inheritedFinalTarget4() {}
+    }
+
+    public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
                 .include(".*" + JavaFinalBenchmark.class.getSimpleName() + ".*")
-                .warmupIterations(10)
-                .measurementIterations(10)
-                .timeUnit(NANOSECONDS)
                 .build();
 
         new Runner(opt).run();
