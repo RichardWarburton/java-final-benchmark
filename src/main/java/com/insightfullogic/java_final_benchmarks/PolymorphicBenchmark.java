@@ -35,11 +35,19 @@ public class PolymorphicBenchmark
     private Polymorph childA;
     private Polymorph childB;
 
+    private InlinablePolymorph inlinablePolymorph;
+    private InlinablePolymorph inlinableChildA;
+    private InlinablePolymorph inlinableChildB;
+
     @Setup
     public void setup() {
         polymorph = new Polymorph();
         childA = new OverridingClassA();
         childB = new OverridingClassB();
+
+        inlinablePolymorph = new InlinablePolymorph();
+        inlinableChildA = new InlinableOverridingClassA();
+        inlinableChildB = new InlinableOverridingClassB();
     }
 
     @GenerateMicroBenchmark
@@ -80,6 +88,44 @@ public class PolymorphicBenchmark
         polymorph.polymorphicMethod();
     }
 
+    @GenerateMicroBenchmark
+    public void inlinableMonomorphicInvoke_warmup() {
+        inlinableInvoke(inlinablePolymorph);
+    }
+
+    @GenerateMicroBenchmark
+    public void inlinableMonomorphicInvoke_measure() {
+        inlinableInvoke(inlinablePolymorph);
+    }
+
+    @GenerateMicroBenchmark
+    public void inlinableBimorphicInvoke_warmup() {
+        inlinableInvoke(inlinableChildA);
+        inlinableInvoke(inlinableChildB);
+    }
+
+    @GenerateMicroBenchmark
+    public void inlinableBimorphicInvoke_measure() {
+        inlinableInvoke(inlinableChildA);
+    }
+
+    @GenerateMicroBenchmark
+    public void inlinableMegamorphicInvoke_warmup() {
+        inlinableInvoke(inlinablePolymorph);
+        inlinableInvoke(inlinableChildA);
+        inlinableInvoke(inlinableChildB);
+    }
+
+    @GenerateMicroBenchmark
+    public void inlinableMegamorphicInvoke_measure() {
+        inlinableInvoke(inlinableChildA);
+    }
+
+    @CompilerControl(DONT_INLINE)
+    private void inlinableInvoke(InlinablePolymorph polymorph) {
+        polymorph.polymorphicMethod();
+    }
+
     public static class Polymorph {
         @CompilerControl(DONT_INLINE)
         public void polymorphicMethod() {
@@ -98,33 +144,51 @@ public class PolymorphicBenchmark
         }
     }
 
+    public static class InlinablePolymorph {
+        public void polymorphicMethod() {
+        }
+    }
+
+    public static class InlinableOverridingClassA extends InlinablePolymorph {
+        public void polymorphicMethod() {
+        }
+    }
+
+    public static class InlinableOverridingClassB extends InlinablePolymorph {
+        public void polymorphicMethod() {
+        }
+    }
+
     public static void main(String[] args) throws RunnerException {
-        RunResult monomorphResult = new Runner(new OptionsBuilder()
-                .warmupMode(WarmupMode.BULK)
-                .include(".*" + PolymorphicBenchmark.class.getSimpleName() + ".*monomorphic.*_measure")
-                .includeWarmup(".*" + PolymorphicBenchmark.class.getSimpleName() + ".*monomorphic.*_warmup")
-                .build()).runSingle();
+        RunResult monomorphResult = makeRunner("monomorphic");
+        RunResult bimorphResult = makeRunner("bimorphic");
+        RunResult megamorphResult = makeRunner("megamorphic");
 
-        RunResult bimorphResult = new Runner(new OptionsBuilder()
-                .warmupMode(WarmupMode.BULK)
-                .include(".*" + PolymorphicBenchmark.class.getSimpleName() + ".*bimorphic.*_measure")
-                .includeWarmup(".*" + PolymorphicBenchmark.class.getSimpleName() + ".*bimorphic.*_warmup")
-                .build()).runSingle();
-
-        RunResult megamorphResult = new Runner(new OptionsBuilder()
-                .warmupMode(WarmupMode.BULK)
-                .include(".*" + PolymorphicBenchmark.class.getSimpleName() + ".*megamorphic.*_measure")
-                .includeWarmup(".*" + PolymorphicBenchmark.class.getSimpleName() + ".*megamorphic.*_warmup")
-                .build()).runSingle();
+        RunResult inlinableMonomorphResult = makeRunner("inlinableMonomorphic");
+        RunResult inlinableBimorphResult = makeRunner("inlinableBimorphic");
+        RunResult inlinableMegamorphResult = makeRunner("inlinableMegamorphic");
 
         System.out.println("----------------------------------");
         print("Mono", monomorphResult.getPrimaryResult());
         print("Bi",   bimorphResult.getPrimaryResult());
         print("Mega", megamorphResult.getPrimaryResult());
+        print("Inlinable Mono", inlinableMonomorphResult.getPrimaryResult());
+        print("Inlinable Bi",   inlinableBimorphResult.getPrimaryResult());
+        print("Inlinable Mega", inlinableMegamorphResult.getPrimaryResult());
+        System.out.println("----------------------------------");
+    }
+
+    private static RunResult makeRunner(String method) throws RunnerException {
+        return new Runner(new OptionsBuilder()
+                .warmupMode(WarmupMode.BULK)
+                .include(".*" + PolymorphicBenchmark.class.getSimpleName() + ".*" + method + ".*_measure")
+                .includeWarmup(".*" + PolymorphicBenchmark.class.getSimpleName() + ".*" + method + ".*_warmup")
+                .build()).runSingle();
     }
 
     private static void print(String label, Result res) {
-        System.out.printf("%5s: %.3f +- %.3f %s%n", label, res.getScore(), res.getStatistics().getStandardDeviation(), res.getScoreUnit());
+        double standardDeviation = res.getStatistics().getStandardDeviation();
+        System.out.printf("%5s: %.3f +- %.3f %s%n", label, res.getScore(), standardDeviation, res.getScoreUnit());
     }
 
 }
