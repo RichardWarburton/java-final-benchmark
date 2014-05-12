@@ -1,14 +1,6 @@
 package com.insightfullogic.java_final_benchmarks;
 
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.CompilerControl;
-import org.openjdk.jmh.annotations.Fork;
-import org.openjdk.jmh.annotations.GenerateMicroBenchmark;
-import org.openjdk.jmh.annotations.Measurement;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.Warmup;
+import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.logic.results.Result;
 import org.openjdk.jmh.logic.results.RunResult;
 import org.openjdk.jmh.runner.Runner;
@@ -18,7 +10,7 @@ import org.openjdk.jmh.runner.options.WarmupMode;
 
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.openjdk.jmh.annotations.CompilerControl.Mode.*;
+import static org.openjdk.jmh.annotations.CompilerControl.Mode.DONT_INLINE;
 import static org.openjdk.jmh.annotations.Mode.AverageTime;
 import static org.openjdk.jmh.annotations.Scope.Thread;
 
@@ -31,6 +23,9 @@ import static org.openjdk.jmh.annotations.Scope.Thread;
 @State(Thread)
 public class PolymorphicBenchmark
 {
+    // Deliberately a field, JMH avoids constant folding
+    private double x = Math.PI;
+
     private Polymorph polymorph;
     private Polymorph childA;
     private Polymorph childB;
@@ -89,41 +84,40 @@ public class PolymorphicBenchmark
     }
 
     @GenerateMicroBenchmark
-    public void inlinableMonomorphicInvoke_warmup() {
-        inlinableInvoke(inlinablePolymorph);
+    public double inlinableMonomorphicInvoke_warmup() {
+        return inlinableInvoke(inlinablePolymorph);
     }
 
     @GenerateMicroBenchmark
-    public void inlinableMonomorphicInvoke_measure() {
-        inlinableInvoke(inlinablePolymorph);
+    public double inlinableMonomorphicInvoke_measure() {
+        return inlinableInvoke(inlinablePolymorph);
     }
 
     @GenerateMicroBenchmark
-    public void inlinableBimorphicInvoke_warmup() {
-        inlinableInvoke(inlinableChildA);
-        inlinableInvoke(inlinableChildB);
+    public double inlinableBimorphicInvoke_warmup() {
+        return inlinableInvoke(inlinableChildA)
+             + inlinableInvoke(inlinableChildB);
     }
 
     @GenerateMicroBenchmark
-    public void inlinableBimorphicInvoke_measure() {
-        inlinableInvoke(inlinableChildA);
+    public double inlinableBimorphicInvoke_measure() {
+        return inlinableInvoke(inlinableChildA);
     }
 
     @GenerateMicroBenchmark
-    public void inlinableMegamorphicInvoke_warmup() {
-        inlinableInvoke(inlinablePolymorph);
-        inlinableInvoke(inlinableChildA);
-        inlinableInvoke(inlinableChildB);
+    public double inlinableMegamorphicInvoke_warmup() {
+        return inlinableInvoke(inlinablePolymorph)
+             + inlinableInvoke(inlinableChildA)
+             + inlinableInvoke(inlinableChildB);
     }
 
     @GenerateMicroBenchmark
-    public void inlinableMegamorphicInvoke_measure() {
-        inlinableInvoke(inlinableChildA);
+    public double inlinableMegamorphicInvoke_measure() {
+        return inlinableInvoke(inlinableChildA);
     }
 
-    @CompilerControl(DONT_INLINE)
-    private void inlinableInvoke(InlinablePolymorph polymorph) {
-        polymorph.polymorphicMethod();
+    private double inlinableInvoke(InlinablePolymorph polymorph) {
+        return polymorph.polymorphicMethod();
     }
 
     public static class Polymorph {
@@ -144,18 +138,21 @@ public class PolymorphicBenchmark
         }
     }
 
-    public static class InlinablePolymorph {
-        public void polymorphicMethod() {
+    public class InlinablePolymorph {
+        public double polymorphicMethod() {
+            return x;
         }
     }
 
-    public static class InlinableOverridingClassA extends InlinablePolymorph {
-        public void polymorphicMethod() {
+    public class InlinableOverridingClassA extends InlinablePolymorph {
+        public double polymorphicMethod() {
+            return x;
         }
     }
 
-    public static class InlinableOverridingClassB extends InlinablePolymorph {
-        public void polymorphicMethod() {
+    public class InlinableOverridingClassB extends InlinablePolymorph {
+        public double polymorphicMethod() {
+            return x;
         }
     }
 
@@ -169,12 +166,12 @@ public class PolymorphicBenchmark
         RunResult inlinableMegamorphResult = makeRunner("inlinableMegamorphic");
 
         System.out.println("----------------------------------");
-        print("Mono", monomorphResult.getPrimaryResult());
-        print("Bi",   bimorphResult.getPrimaryResult());
-        print("Mega", megamorphResult.getPrimaryResult());
-        print("Inlinable Mono", inlinableMonomorphResult.getPrimaryResult());
-        print("Inlinable Bi",   inlinableBimorphResult.getPrimaryResult());
-        print("Inlinable Mega", inlinableMegamorphResult.getPrimaryResult());
+        print("Monomorphic", monomorphResult.getPrimaryResult());
+        print("Bimorphic",   bimorphResult.getPrimaryResult());
+        print("Megamorphic", megamorphResult.getPrimaryResult());
+        print("Inlinable Monomorphic", inlinableMonomorphResult.getPrimaryResult());
+        print("Inlinable Bimorphic",   inlinableBimorphResult.getPrimaryResult());
+        print("Inlinable Megamorphic", inlinableMegamorphResult.getPrimaryResult());
         System.out.println("----------------------------------");
     }
 

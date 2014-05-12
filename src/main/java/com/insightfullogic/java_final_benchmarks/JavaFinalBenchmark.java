@@ -20,6 +20,9 @@ import static org.openjdk.jmh.annotations.Scope.Thread;
 @State(Thread)
 public class JavaFinalBenchmark {
 
+    // Deliberately a field, JMH avoids constant folding
+    private double x = Math.PI;
+
     private TargetClass1 target;
     private InlinableTargetClass1 inlinableTarget;
 
@@ -102,98 +105,112 @@ public class JavaFinalBenchmark {
     }
 
     @GenerateMicroBenchmark
-    public void inlinableParentMethod1() {
-        inlinableTarget.inheritedTarget1();
+    public double inlinableParentMethod1() {
+        return inlinableTarget.inheritedTarget1();
     }
 
     @GenerateMicroBenchmark
-    public void inlinableParentMethod2() {
-        inlinableTarget.inheritedTarget2();
+    public double inlinableParentMethod2() {
+        return inlinableTarget.inheritedTarget2();
     }
 
     @GenerateMicroBenchmark
-    public void inlinableParentMethod3() {
-        inlinableTarget.inheritedTarget3();
+    public double inlinableParentMethod3() {
+        return inlinableTarget.inheritedTarget3();
     }
 
     @GenerateMicroBenchmark
-    public void inlinableParentMethod4() {
-        inlinableTarget.inheritedTarget4();
+    public double inlinableParentMethod4() {
+        return inlinableTarget.inheritedTarget4();
     }
 
     @GenerateMicroBenchmark
-    public void inlinableParentFinalMethod1() {
-        inlinableTarget.inheritedFinalTarget1();
+    public double inlinableParentFinalMethod1() {
+        return inlinableTarget.inheritedFinalTarget1();
     }
 
     @GenerateMicroBenchmark
-    public void inlinableParentFinalMethod2() {
-        inlinableTarget.inheritedFinalTarget2();
+    public double inlinableParentFinalMethod2() {
+        return inlinableTarget.inheritedFinalTarget2();
     }
 
     @GenerateMicroBenchmark
-    public void inlinableParentFinalMethod3() {
-        inlinableTarget.inheritedFinalTarget3();
+    public double inlinableParentFinalMethod3() {
+        return inlinableTarget.inheritedFinalTarget3();
     }
 
     @GenerateMicroBenchmark
-    public void inlinableParentFinalMethod4() {
-        inlinableTarget.inheritedFinalTarget4();
+    public double inlinableParentFinalMethod4() {
+        return inlinableTarget.inheritedFinalTarget4();
     }
 
     @GenerateMicroBenchmark
-    public void inlinableAlwaysOverriddenMethod() {
-        inlinableTarget.alwaysOverriddenTarget();
+    public double inlinableAlwaysOverriddenMethod() {
+        return inlinableTarget.alwaysOverriddenTarget();
     }
 
 
-    public static class InlinableTargetClass1 extends InlinableTargetClass2 {
-        public void alwaysOverriddenTarget() {
+    public class InlinableTargetClass1 extends InlinableTargetClass2 {
+        public double alwaysOverriddenTarget() {
+            return x;
         }
 
-        public void inheritedTarget1() {
+        public double inheritedTarget1() {
+            return x;
         }
 
-        public final void inheritedFinalTarget1() {
+        public final double inheritedFinalTarget1() {
+            return x;
         }
 
-        public void targetVirtual() {
+        public double targetVirtual() {
+            return x;
         }
 
-        public final void targetFinal() {
-        }
-    }
-
-    public static class InlinableTargetClass2 extends InlinableTargetClass3 {
-        public void alwaysOverriddenTarget() {
-        }
-
-        public void inheritedTarget2() {
-        }
-
-        public final void inheritedFinalTarget2() {
+        public final double targetFinal() {
+            return x;
         }
     }
 
-    public static class InlinableTargetClass3 extends InlinableTargetClass4 {
-        public void alwaysOverriddenTarget() {
+    public class InlinableTargetClass2 extends InlinableTargetClass3 {
+        public double alwaysOverriddenTarget() {
+            return x;
         }
 
-        public void inheritedTarget3() {
+        public double inheritedTarget2() {
+            return x;
         }
 
-        public final void inheritedFinalTarget3() {
+        public final double inheritedFinalTarget2() {
+            return x;
         }
     }
 
-    public static class InlinableTargetClass4 {
-        public void alwaysOverriddenTarget() {
+    public class InlinableTargetClass3 extends InlinableTargetClass4 {
+        public double alwaysOverriddenTarget() {
+            return x;
         }
 
-        public void inheritedTarget4() {
+        public double inheritedTarget3() {
+            return x;
         }
 
-        public final void inheritedFinalTarget4() {
+        public final double inheritedFinalTarget3() {
+            return x;
+        }
+    }
+
+    public class InlinableTargetClass4 {
+        public double alwaysOverriddenTarget() {
+            return x;
+        }
+
+        public double inheritedTarget4() {
+            return x;
+        }
+
+        public final double inheritedFinalTarget4() {
+            return x;
         }
     }
 
