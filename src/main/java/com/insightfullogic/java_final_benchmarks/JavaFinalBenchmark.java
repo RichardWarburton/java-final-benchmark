@@ -15,7 +15,7 @@ import static org.openjdk.jmh.annotations.Scope.Thread;
 @BenchmarkMode(AverageTime)
 @Warmup(iterations = 5, time = 1, timeUnit = SECONDS)
 @Measurement(iterations = 5, time = 1, timeUnit = SECONDS)
-@Fork(1)
+@Fork(5)
 @OutputTimeUnit(NANOSECONDS)
 @State(Thread)
 public class JavaFinalBenchmark {
