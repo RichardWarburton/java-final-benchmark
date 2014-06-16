@@ -32,22 +32,22 @@ public class JavaFinalBenchmark {
         inlinableTarget = new InlinableTargetClass1();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void virtualInvoke() {
         target.targetVirtual();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void finalInvoke() {
         target.targetFinal();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void inlinableVirtualInvoke() {
         inlinableTarget.targetVirtual();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void inlinableFinalInvoke() {
         inlinableTarget.targetFinal();
     }
@@ -59,92 +59,92 @@ public class JavaFinalBenchmark {
      * Numbers refer to how far up the class hierarchy the inherited method is from
      */
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void parentMethod1() {
         target.inheritedTarget1();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void parentMethod2() {
         target.inheritedTarget2();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void parentMethod3() {
         target.inheritedTarget3();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void parentMethod4() {
         target.inheritedTarget4();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void parentFinalMethod1() {
         target.inheritedFinalTarget1();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void parentFinalMethod2() {
         target.inheritedFinalTarget2();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void parentFinalMethod3() {
         target.inheritedFinalTarget3();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void parentFinalMethod4() {
         target.inheritedFinalTarget4();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void alwaysOverriddenMethod() {
         target.alwaysOverriddenTarget();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public double inlinableParentMethod1() {
         return inlinableTarget.inheritedTarget1();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public double inlinableParentMethod2() {
         return inlinableTarget.inheritedTarget2();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public double inlinableParentMethod3() {
         return inlinableTarget.inheritedTarget3();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public double inlinableParentMethod4() {
         return inlinableTarget.inheritedTarget4();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public double inlinableParentFinalMethod1() {
         return inlinableTarget.inheritedFinalTarget1();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public double inlinableParentFinalMethod2() {
         return inlinableTarget.inheritedFinalTarget2();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public double inlinableParentFinalMethod3() {
         return inlinableTarget.inheritedFinalTarget3();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public double inlinableParentFinalMethod4() {
         return inlinableTarget.inheritedFinalTarget4();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public double inlinableAlwaysOverriddenMethod() {
         return inlinableTarget.alwaysOverriddenTarget();
     }
