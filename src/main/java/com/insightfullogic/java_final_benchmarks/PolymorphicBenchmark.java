@@ -1,8 +1,8 @@
 package com.insightfullogic.java_final_benchmarks;
 
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.logic.results.Result;
-import org.openjdk.jmh.logic.results.RunResult;
+import org.openjdk.jmh.results.Result;
+import org.openjdk.jmh.results.RunResult;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
@@ -45,35 +45,35 @@ public class PolymorphicBenchmark
         inlinableChildB = new InlinableOverridingClassB();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void monomorphicInvoke_warmup() {
         invoke(polymorph);
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void monomorphicInvoke_measure() {
         invoke(polymorph);
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void bimorphicInvoke_warmup() {
         invoke(childA);
         invoke(childB);
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void bimorphicInvoke_measure() {
         invoke(childA);
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void megamorphicInvoke_warmup() {
         invoke(polymorph);
         invoke(childA);
         invoke(childB);
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public void megamorphicInvoke_measure() {
         invoke(childA);
     }
@@ -83,35 +83,35 @@ public class PolymorphicBenchmark
         polymorph.polymorphicMethod();
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public double inlinableMonomorphicInvoke_warmup() {
         return inlinableInvoke(inlinablePolymorph);
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public double inlinableMonomorphicInvoke_measure() {
         return inlinableInvoke(inlinablePolymorph);
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public double inlinableBimorphicInvoke_warmup() {
         return inlinableInvoke(inlinableChildA)
              + inlinableInvoke(inlinableChildB);
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public double inlinableBimorphicInvoke_measure() {
         return inlinableInvoke(inlinableChildA);
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public double inlinableMegamorphicInvoke_warmup() {
         return inlinableInvoke(inlinablePolymorph)
              + inlinableInvoke(inlinableChildA)
              + inlinableInvoke(inlinableChildB);
     }
 
-    @GenerateMicroBenchmark
+    @Benchmark
     public double inlinableMegamorphicInvoke_measure() {
         return inlinableInvoke(inlinableChildA);
     }
