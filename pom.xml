@@ -9,18 +9,6 @@
 
     <name>Java Final Benchmark</name>
 
-  <repositories>
-    <repository>
-      <id>central2</id>
-      <name>Maven Central Repository</name>
-      <layout>default</layout>
-      <url>http://central.maven.org/maven2</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
